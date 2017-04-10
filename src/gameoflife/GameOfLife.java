@@ -26,6 +26,8 @@ public class GameOfLife extends JFrame implements Runnable {
     final int numColumns = 32;
     public static int columnWidth;
     public static int rowHeight;
+    boolean paused = true;
+    Tile lastChanged;
 
     public static void main(String[] args) {
         frame1 = new GameOfLife();
@@ -44,6 +46,11 @@ public class GameOfLife extends JFrame implements Runnable {
                     
                     int row = ypos/rowHeight;
                     int column = xpos/columnWidth;
+                    if(row>numRows) row = numRows-1;
+                    if(row<0) row = 0;
+                    if(column>numColumns) column = numColumns-1;
+                    if(column<0) column = 0;
+            
                     System.out.println(row + ", " + column);
                     Tile.board[row][column].changeAlive();
                     Tile.checkNextTo();
@@ -60,6 +67,25 @@ public class GameOfLife extends JFrame implements Runnable {
     addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
         repaint();
+        if (e.BUTTON1 == e.getButton()) {
+            int xpos = e.getX() - w.getX(0);
+            int ypos = e.getY() - w.getY(0);
+
+            int row = ypos/rowHeight;
+            int column = xpos/columnWidth;
+            if(row>numRows) row = numRows-1;
+            if(row<0) row = 0;
+            if(column>numColumns) column = numColumns-1;
+            if(column<0) column = 0;
+            
+            if(lastChanged!=Tile.board[row][column]) {
+                lastChanged=Tile.board[row][column];
+                System.out.println(row + ", " + column);
+                Tile.board[row][column].changeAlive();
+                Tile.checkNextTo();
+            }
+            //left button
+        }
       }
     });
 
@@ -86,8 +112,7 @@ public class GameOfLife extends JFrame implements Runnable {
                 }
                 if (e.VK_SPACE == e.getKeyCode())
                 {
-                    Tile.nextMove();
-                    Tile.checkNextTo();
+                    paused = !paused;
                 }
 
                 repaint();
@@ -151,7 +176,11 @@ public class GameOfLife extends JFrame implements Runnable {
                       rowHeight);
                 }
                 else  {
-                    g.setColor(Color.WHITE);
+                    if(paused)
+                        g.setColor(Color.RED);
+                    else
+                        g.setColor(Color.WHITE);
+                    
                     g.fillRect(w.getX(0)+zcolumn*columnWidth,
                       w.getY(0)+zrow*rowHeight,
                       columnWidth,
@@ -186,7 +215,7 @@ public class GameOfLife extends JFrame implements Runnable {
         while (true) {
             animate();
             repaint();
-            double seconds = 0.04;    //time that 1 frame takes.
+            double seconds = 0.05;    //time that 1 frame takes.
             int miliseconds = (int) (1000.0 * seconds);
             try {
                 Thread.sleep(miliseconds);
@@ -208,6 +237,10 @@ public class GameOfLife extends JFrame implements Runnable {
                 w.ysize = getSize().height;
             }
             reset();
+        }
+        if(!paused) {
+            Tile.nextMove();
+            Tile.checkNextTo();
         }
         columnWidth = w.getWidth2()/numColumns;
         rowHeight = w.getHeight2()/numRows;
