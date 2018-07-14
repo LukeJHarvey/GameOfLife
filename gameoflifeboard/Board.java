@@ -10,16 +10,35 @@ public class Board {
 	}
 	Tile board[][];
 
+	Board() {
+		board = new Tile[16][16];
+	}
 	Board(int row, int col) {
 		board = new Tile[row][col];
+	}
+	Board(int[][] pBoard) {
+		board = new Tile[pBoard.length][pBoard[0].length];
+		for(int i = 0; i < pBoard.length; i++) {
+			for(int j = 0; j < pBoard.length; j++) {
+				board[i][j] = newTile(pBoard[i][j]);
+			}
+		}
 	}
 	//Changes Tile based on phase
 	public void changeTile(int row, int col, int phase) {
 		Tile piece = board[row][col];
 		piece.phase = phase;
 	}
+	public boolean isAlive(int row, int col) {
+		return board[row][col].phase != -1;
+	}
+	public int getPhase(int row, int col) {
+		return board[row][col].phase;
+	}
+
+
 	//Check how many Tiles next to
-	public int nextTo(int row, int col) {
+	private int nextTo(int row, int col) {
 		Tile piece = board[row][col];
 		int count = 0;
 
@@ -51,4 +70,20 @@ public class Board {
 		return count;
 	}
 	//transitions to next turn;
+	public void nextMove() {
+		for(int i = 0; i < board.length(); i++) {
+			for(int j = 0; j < board[0].length(); j++) {
+				int nextTo = nextTo(i, j);
+				//if next to less than 2 or more than 3, alive pieces die.
+				if(board[i][j].phase != -1 && (nextTo =>4 || nextTo =< 1)){
+                	board[i][j].phase = -1;
+                }
+                //if next to exactly 3 alive squares, a dead one becomes alive
+                else if(board[i][j] == -1 && nextTo == 3){
+                    board[i][j].phase = 1;
+                }
+			}
+		}
+	}
+
 }
