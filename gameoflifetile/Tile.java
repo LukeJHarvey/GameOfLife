@@ -1,5 +1,5 @@
 
-package gameoflife;
+package gameoflifetile;
 public class Tile {
     public static Tile board[][];
     static int phase = 0;
@@ -149,15 +149,16 @@ public class Tile {
                 count = (board[x.row+1][x.column-1].alive) ? count+1 : count;
                 count = (board[x.row][x.column-1].alive) ? count+1 : count;
             }
+            //This one is the correct order to check around the selected tile
             else {
                 count = (board[x.row-1][x.column].alive) ? count+1 : count;
                 count = (board[x.row-1][x.column-1].alive) ? count+1 : count;
                 count = (board[x.row][x.column-1].alive) ? count+1 : count;
-                count = (board[x.row-1][x.column+1].alive) ? count+1 : count;
-                count = (board[x.row+1][x.column].alive) ? count+1 : count;
                 count = (board[x.row+1][x.column-1].alive) ? count+1 : count;
+                count = (board[x.row+1][x.column].alive) ? count+1 : count;
                 count = (board[x.row+1][x.column+1].alive) ? count+1 : count;
                 count = (board[x.row][x.column+1].alive) ? count+1 : count;
+                count = (board[x.row-1][x.column+1].alive) ? count+1 : count;
             }
         }
         x.nextTo = count;

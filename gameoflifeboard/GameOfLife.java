@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package gameoflife;
+package gameoflifeboard;
 
 import java.io.*;
 import java.awt.*;

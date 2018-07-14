@@ -14,7 +14,7 @@ JAVASRC    = gameoflife/GameOfLife.java gameoflife/Tile.java
 SOURCES    = $(JAVASRC) makefile README
 CLASSES    = $(patsubst %.java, %.class, $(JAVASRC))
 JARCLASSES = $(patsubst %.class, %*.class, $(CLASSES))
-JARFILE    = $(MAINCLASS) 
+JARFILE    = $(MAINCLASS).jar
 
 
 all: $(JARFILE)
@@ -29,4 +29,4 @@ $(JARFILE): $(CLASSES)
 	$(JAVAC) $<
 
 clean:
-	rm *.class $(JARFILE)
+	rm gameoflife/*.class $(JARFILE)
