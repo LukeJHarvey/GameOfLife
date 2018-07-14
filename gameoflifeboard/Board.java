@@ -3,7 +3,7 @@ package gameoflifeboard;
 public class Board {
 	private class Tile {
 		int phase = -1;				//-1 = dead, 1 = alive, 2 = special
-		//int nextTo = 0;
+		int nextTo = 0;				//Have to keep track of nextTo for nextMove() to work correctly
 		Tile(int phase) {
 			this.phase = phase;
 		}
@@ -23,11 +23,14 @@ public class Board {
 				board[i][j] = newTile(pBoard[i][j]);
 			}
 		}
+		checkNextTo();
 	}
+
 	//Changes Tile based on phase
 	public void changeTile(int row, int col, int phase) {
 		Tile piece = board[row][col];
 		piece.phase = phase;
+		updateNextToAroundTile(row, col);
 	}
 	public boolean isAlive(int row, int col) {
 		return board[row][col].phase != -1;
@@ -35,13 +38,16 @@ public class Board {
 	public int getPhase(int row, int col) {
 		return board[row][col].phase;
 	}
+	public int getNextTo(int row, int col) {
+		board[row][col].nextTo = nextTo(row, col);
+		return board[row][col].nextTo;
+	}
+	public void resetBoard(int row, int col) {
+		board = new Tile[row][col];
+	}
 
-
-	//Check how many Tiles next to
-	private int nextTo(int row, int col) {
-		Tile piece = board[row][col];
-		int count = 0;
-
+	//gets Increment for checking around a piece
+	private int[][] getIncrement(int row, int col) {
 		//Create array for checking around the piece
 		//([0][i],[1][i]) points for array
 		int inc[][] = 	{-1, -1, 0,  1,  1, 1, 0, -1},
@@ -61,19 +67,45 @@ public class Board {
 				}
 			}
 		}
+		return inc;
+	}
+	//updates nextTo around piece
+	private updateNextToAroundTile(int row, int col) {
+		int[][] inc = getIncrement(row, col);
+		for(i = 0; i < inc[0].length; i++) {
+			nextTo(row + inc[0][i], col + inc[1][i]);
+		}
+	}
+
+	//Check how many Tiles next to
+	private int nextTo(int row, int col) {
+		int count = 0;
+
+		int inc[][] = getIncrement(row, col);
 
 		//checks around piece using inc[][] to move around piece
-		for(i = 0; i <inc[0].length; i++) {
-			count = (board[ inc[0][i] ][ inc[1][i] ]).phase !=-1 ? count+1 : count;
+		for(i = 0; i < inc[0].length; i++) {
+			count = (board[ row + inc[0][i] ][ col + inc[1][i] ]).phase !=-1 ? count+1 : count;
 		}
-		
+
+		board[row][col].nextTo = count;
 		return count;
 	}
+	//Changes nextTo status of each piece on the board, for nextMove()
+	public void checkNextTo() {
+        for(int i = 0; i<board.length; i++)
+        {
+            for(int j = 0; j<board[0].length; j++)
+            {
+                nextTo(i, j);
+            }
+        }
+    }
 	//transitions to next turn;
 	public void nextMove() {
 		for(int i = 0; i < board.length(); i++) {
 			for(int j = 0; j < board[0].length(); j++) {
-				int nextTo = nextTo(i, j);
+				int nextTo = board[i][j].nextTo;
 				//if next to less than 2 or more than 3, alive pieces die.
 				if(board[i][j].phase != -1 && (nextTo =>4 || nextTo =< 1)){
                 	board[i][j].phase = -1;
@@ -84,6 +116,7 @@ public class Board {
                 }
 			}
 		}
+		checkNextTo();
 	}
 
 }

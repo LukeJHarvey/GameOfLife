@@ -27,7 +27,7 @@ public class GameOfLife extends JFrame implements Runnable {
     public static int columnWidth;
     public static int rowHeight;
     boolean paused = true;
-    Tile lastChanged;
+    int lastChecked[] = new int[2];
 
     public static void main(String[] args) {
         frame1 = new GameOfLife();
@@ -52,8 +52,7 @@ public class GameOfLife extends JFrame implements Runnable {
                     if(column<0) column = 0;
             
                     System.out.println(row + ", " + column);
-                    Tile.board[row][column].changeAlive();
-                    Tile.checkNextTo();
+                    Board.changeTile(row, col, Board.getPhase(row, col) == -1 ? 1:-1);
                     //left button
                 }
                 if (e.BUTTON3 == e.getButton()) {
@@ -78,11 +77,10 @@ public class GameOfLife extends JFrame implements Runnable {
             if(column>numColumns) column = numColumns-1;
             if(column<0) column = 0;
             
-            if(lastChanged!=Tile.board[row][column]) {
-                lastChanged=Tile.board[row][column];
+            if(lastChanged[0]!=row && lastChanged[1]!=column]) {
+                lastChanged = {row, column};
                 System.out.println(row + ", " + column);
-                Tile.board[row][column].changeAlive();
-                Tile.checkNextTo();
+                Board.changeTile(row, col, Board.getPhase(row, col) == -1 ? 1:-1)
             }
             //left button
         }
@@ -168,7 +166,7 @@ public class GameOfLife extends JFrame implements Runnable {
         {
             for (int zcolumn=0;zcolumn<numColumns;zcolumn++)
             {
-                if(Tile.board[zrow][zcolumn].alive) {
+                if(Board.isAlive(zrow,zcolumn)) {
                     g.setColor(Color.BLACK);
                     g.fillRect(w.getX(0)+zcolumn*columnWidth,
                       w.getY(0)+zrow*rowHeight,
@@ -186,12 +184,6 @@ public class GameOfLife extends JFrame implements Runnable {
                       columnWidth,
                       rowHeight);
                 }
-//                g.setColor(Color.MAGENTA);
-//                g.drawString(""+Tile.board[zrow][zcolumn].nextTo,
-//                        w.getX(0)+zcolumn*columnWidth + columnWidth/2,
-//                        w.getY(0)+zrow*rowHeight + rowHeight/2);
-                        //w.getX(Tile.board[zrow][zcolumn].getRow()*columnWidth+(columnWidth/2)-5),
-                        //w.getY(Tile.board[zrow][zcolumn].getColumn()*rowHeight+(rowHeight/2))+5);
             }
         }
         g.setColor(Color.blue);
@@ -225,7 +217,7 @@ public class GameOfLife extends JFrame implements Runnable {
     }
 /////////////////////////////////////////////////////////////////////////
     public void reset() {  
-        Tile.setBoard(numColumns, numRows);
+        Board.resetBoard(numColumns, numRows);
     }
 /////////////////////////////////////////////////////////////////////////
     public void animate() {
@@ -239,8 +231,7 @@ public class GameOfLife extends JFrame implements Runnable {
             reset();
         }
         if(!paused) {
-            Tile.nextMove();
-            Tile.checkNextTo();
+            Board.nextMove();
         }
         columnWidth = w.getWidth2()/numColumns;
         rowHeight = w.getHeight2()/numRows;
