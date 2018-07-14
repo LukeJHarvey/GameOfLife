@@ -11,7 +11,7 @@
 JAVAC      = javac 
 PACKAGE	   = gameoflifeboard
 MAINCLASS  = $(PACKAGE)/GameOfLife
-JAVASRC    = $(PACKAGE)/GameOfLife.java $(PACKAGE)/Tile.java
+JAVASRC    = $(PACKAGE)/GameOfLife.java $(PACKAGE)/Board.java
 SOURCES    = $(JAVASRC) makefile README
 CLASSES    = $(patsubst %.java, %.class, $(JAVASRC))
 JARCLASSES = $(patsubst %.class, %*.class, $(CLASSES))
@@ -31,4 +31,4 @@ $(JARFILE): $(CLASSES)
 
 clean:
 	rm $(PACKAGE)/*.class $(JARFILE)
-	rm $(PACKAGE)/*.class $(JARFILE)
+	#rm $(PACKAGE)/*.class $(JARFILE)
