@@ -27,7 +27,8 @@ public class GameOfLife extends JFrame implements Runnable {
     public static int columnWidth;
     public static int rowHeight;
     boolean paused = true;
-    int lastChecked[] = new int[2];
+    int lastChanged[] = new int[2];
+    Board board;
 
     public static void main(String[] args) {
         frame1 = new GameOfLife();
@@ -52,7 +53,7 @@ public class GameOfLife extends JFrame implements Runnable {
                     if(column<0) column = 0;
             
                     System.out.println(row + ", " + column);
-                    Board.changeTile(row, col, Board.getPhase(row, col) == -1 ? 1:-1);
+                    board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1:-1);
                     //left button
                 }
                 if (e.BUTTON3 == e.getButton()) {
@@ -77,10 +78,10 @@ public class GameOfLife extends JFrame implements Runnable {
             if(column>numColumns) column = numColumns-1;
             if(column<0) column = 0;
             
-            if(lastChanged[0]!=row && lastChanged[1]!=column]) {
-                lastChanged = {row, column};
+            if(lastChanged[0]!=row && lastChanged[1]!=column) {
+                lastChanged = new int[]{row, column};
                 System.out.println(row + ", " + column);
-                Board.changeTile(row, col, Board.getPhase(row, col) == -1 ? 1:-1)
+                board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1:-1);
             }
             //left button
         }
@@ -166,7 +167,7 @@ public class GameOfLife extends JFrame implements Runnable {
         {
             for (int zcolumn=0;zcolumn<numColumns;zcolumn++)
             {
-                if(Board.isAlive(zrow,zcolumn)) {
+                if(board.isAlive(zrow,zcolumn)) {
                     g.setColor(Color.BLACK);
                     g.fillRect(w.getX(0)+zcolumn*columnWidth,
                       w.getY(0)+zrow*rowHeight,
@@ -217,7 +218,7 @@ public class GameOfLife extends JFrame implements Runnable {
     }
 /////////////////////////////////////////////////////////////////////////
     public void reset() {  
-        Board.resetBoard(numColumns, numRows);
+        board.resetBoard(numColumns, numRows);
     }
 /////////////////////////////////////////////////////////////////////////
     public void animate() {
@@ -228,10 +229,10 @@ public class GameOfLife extends JFrame implements Runnable {
                 w.xsize = getSize().width;
                 w.ysize = getSize().height;
             }
-            reset();
+            board = new Board(numColumns, numRows);
         }
         if(!paused) {
-            Board.nextMove();
+            board.nextMove();
         }
         columnWidth = w.getWidth2()/numColumns;
         rowHeight = w.getHeight2()/numRows;

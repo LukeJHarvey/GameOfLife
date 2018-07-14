@@ -8,7 +8,7 @@ public class Board {
 			this.phase = phase;
 		}
 	}
-	Tile board[][];
+	private Tile board[][];
 
 	Board() {
 		board = new Tile[16][16];
@@ -20,7 +20,7 @@ public class Board {
 		board = new Tile[pBoard.length][pBoard[0].length];
 		for(int i = 0; i < pBoard.length; i++) {
 			for(int j = 0; j < pBoard.length; j++) {
-				board[i][j] = newTile(pBoard[i][j]);
+				board[i][j] = new Tile(pBoard[i][j]);
 			}
 		}
 		checkNextTo();
@@ -50,18 +50,20 @@ public class Board {
 	private int[][] getIncrement(int row, int col) {
 		//Create array for checking around the piece
 		//([0][i],[1][i]) points for array
-		int inc[][] = 	{-1, -1, 0,  1,  1, 1, 0, -1},
+		int inc[][] = new int[][] {
+						{-1, -1, 0,  1,  1, 1, 0, -1},
 						{0,  -1, -1, -1, 0, 1, 1, 1}
+					};
 		//Checks if the piece is against the sides of the board
-		boolean sideCheck[] = {row == 0, col == 0, row = board.length-1, col = board[row].length-1};
+		boolean sideCheck[] = {row == 0, col == 0, row == board.length-1, col == board[row].length-1};
 		//takes away conflicting points off of the Increment Array
 		for(int i = 0; i < 3; i++) {
 			if(sideCheck[i]) {
 				if(inc[0].length !=0) {
-					int newInc[][] = [2][inc.length-3];
-					for(int i = 0; i<inc.length-3; i++) {
-						newInc[0][i] = inc[0][2+i];
-						newInc[1][i] = inc[1][2+i];
+					int newInc[][] = new int[2][inc.length-3];
+					for(int j = 0; j<inc.length-3; j++) {
+						newInc[0][i] = inc[0][2+j];
+						newInc[1][i] = inc[1][2+j];
 					}
 					inc = newInc;
 				}
@@ -70,9 +72,9 @@ public class Board {
 		return inc;
 	}
 	//updates nextTo around piece
-	private updateNextToAroundTile(int row, int col) {
+	private void updateNextToAroundTile(int row, int col) {
 		int[][] inc = getIncrement(row, col);
-		for(i = 0; i < inc[0].length; i++) {
+		for(int i = 0; i < inc[0].length; i++) {
 			nextTo(row + inc[0][i], col + inc[1][i]);
 		}
 	}
@@ -84,7 +86,7 @@ public class Board {
 		int inc[][] = getIncrement(row, col);
 
 		//checks around piece using inc[][] to move around piece
-		for(i = 0; i < inc[0].length; i++) {
+		for(int i = 0; i < inc[0].length; i++) {
 			count = (board[ row + inc[0][i] ][ col + inc[1][i] ]).phase !=-1 ? count+1 : count;
 		}
 
@@ -93,9 +95,9 @@ public class Board {
 	}
 	//Changes nextTo status of each piece on the board, for nextMove()
 	public void checkNextTo() {
-        for(int i = 0; i<board.length; i++)
+        for(int i = 0; i < board.length; i++)
         {
-            for(int j = 0; j<board[0].length; j++)
+            for(int j = 0; j < board[0].length; j++)
             {
                 nextTo(i, j);
             }
@@ -103,15 +105,15 @@ public class Board {
     }
 	//transitions to next turn;
 	public void nextMove() {
-		for(int i = 0; i < board.length(); i++) {
-			for(int j = 0; j < board[0].length(); j++) {
+		for(int i = 0; i < board.length; i++) {
+			for(int j = 0; j < board[0].length; j++) {
 				int nextTo = board[i][j].nextTo;
 				//if next to less than 2 or more than 3, alive pieces die.
-				if(board[i][j].phase != -1 && (nextTo =>4 || nextTo =< 1)){
+				if(board[i][j].phase != -1 && (nextTo >=4 || nextTo <= 1)){
                 	board[i][j].phase = -1;
                 }
                 //if next to exactly 3 alive squares, a dead one becomes alive
-                else if(board[i][j] == -1 && nextTo == 3){
+                else if(board[i][j].phase == -1 && nextTo == 3){
                     board[i][j].phase = 1;
                 }
 			}
