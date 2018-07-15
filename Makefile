@@ -31,4 +31,3 @@ $(JARFILE): $(CLASSES)
 
 clean:
 	rm $(PACKAGE)/*.class $(JARFILE)
-	#rm $(PACKAGE)/*.class $(JARFILE)

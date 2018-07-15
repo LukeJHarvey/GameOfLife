@@ -47,13 +47,10 @@ public class GameOfLife extends JFrame implements Runnable {
                     
                     int row = ypos/rowHeight;
                     int column = xpos/columnWidth;
-                    if(row>numRows) row = numRows-1;
-                    if(row<0) row = 0;
-                    if(column>numColumns) column = numColumns-1;
-                    if(column<0) column = 0;
-            
-                    System.out.println(row + ", " + column);
-                    board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1:-1);
+                    if(row<numRows && row>=0 && column<numColumns && column>=0) {  
+                        System.out.println(row + ", " + column);
+                        board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1:-1);
+                    }
                     //left button
                 }
                 if (e.BUTTON3 == e.getButton()) {
@@ -218,7 +215,7 @@ public class GameOfLife extends JFrame implements Runnable {
     }
 /////////////////////////////////////////////////////////////////////////
     public void reset() {  
-        board.resetBoard(numColumns, numRows);
+        board.resetBoard();
     }
 /////////////////////////////////////////////////////////////////////////
     public void animate() {
