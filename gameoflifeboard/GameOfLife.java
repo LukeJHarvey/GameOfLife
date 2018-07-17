@@ -62,10 +62,8 @@ public class GameOfLife extends JFrame implements Runnable {
                         System.out.println(row + ", " + column);
                         board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1 : -1);
                     }
-                    //left button
                 }
                 if (e.BUTTON3 == e.getButton()) {
-                    //right button
                     reset();
                 }
                 repaint();
@@ -88,7 +86,6 @@ public class GameOfLife extends JFrame implements Runnable {
                         }
                     }
                     repaint();
-                    //left button
                 }
             }
         });
@@ -188,12 +185,12 @@ public class GameOfLife extends JFrame implements Runnable {
             }
         }
         g.setColor(Color.blue);
-//horizontal lines
+        //horizontal lines
         for (int zi = 1; zi < numRows; zi++) {
             g.drawLine(w.getX(0) , w.getY(0) + zi * w.getHeight2() / numRows ,
                        w.getX(w.getWidth2()) , w.getY(0) + zi * w.getHeight2() / numRows );
         }
-//vertical lines
+        //vertical lines
         for (int zi = 1; zi < numColumns; zi++) {
             g.drawLine(w.getX(0) + zi * w.getWidth2() / numColumns , w.getY(0) ,
                        w.getX(0) + zi * w.getWidth2() / numColumns, w.getY(w.getHeight2())  );
@@ -220,7 +217,6 @@ public class GameOfLife extends JFrame implements Runnable {
     }
 /////////////////////////////////////////////////////////////////////////
     public void animate() {
-
         if (animateFirstTime) {
             animateFirstTime = false;
             if (w.xsize != getSize().width || w.ysize != getSize().height) {
