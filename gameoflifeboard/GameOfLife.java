@@ -6,31 +6,42 @@
 package gameoflifeboard;
 
 import java.io.*;
+import java.util.Scanner;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import javax.swing.*;
 
- 
+
 public class GameOfLife extends JFrame implements Runnable {
 
     static Window w = new Window();
-    
+
     boolean animateFirstTime = true;
-    
+
     Image image;
     Graphics2D g;
-    
+
     static GameOfLife frame1;
-    final int numRows = 32;
-    final int numColumns = 32;
+    static int numRows;
+    static int numColumns;
     public static int columnWidth;
     public static int rowHeight;
     boolean paused = true;
+    boolean nextOn = false;
     int lastChanged[] = new int[2];
     Board board;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        if (args.length == 3) {
+            String filename = args[3];
+            Scanner in = new Scanner(new File(filename));
+
+        } else {
+            numRows = Integer.parseInt(args[0]);
+            numColumns = Integer.parseInt(args[1]);
+        }
+
         frame1 = new GameOfLife();
         frame1.setSize(w.WINDOW_WIDTH, w.WINDOW_HEIGHT);
         frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,12 +55,12 @@ public class GameOfLife extends JFrame implements Runnable {
                 if (e.BUTTON1 == e.getButton()) {
                     int xpos = e.getX() - w.getX(0);
                     int ypos = e.getY() - w.getY(0);
-                    
-                    int row = ypos/rowHeight;
-                    int column = xpos/columnWidth;
-                    if(row<numRows && row>=0 && column<numColumns && column>=0) {  
+
+                    int row = ypos / rowHeight;
+                    int column = xpos / columnWidth;
+                    if (row < numRows && row >= 0 && column < numColumns && column >= 0) {
                         System.out.println(row + ", " + column);
-                        board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1:-1);
+                        board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1 : -1);
                     }
                     //left button
                 }
@@ -61,54 +72,46 @@ public class GameOfLife extends JFrame implements Runnable {
             }
         });
 
-    addMouseMotionListener(new MouseMotionAdapter() {
-      public void mouseDragged(MouseEvent e) {
-        repaint();
-        if (e.BUTTON1 == e.getButton()) {
-            int xpos = e.getX() - w.getX(0);
-            int ypos = e.getY() - w.getY(0);
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent e) {
+                if (e.BUTTON1 == e.getButton()) {
+                    int xpos = e.getX() - w.getX(0);
+                    int ypos = e.getY() - w.getY(0);
 
-            int row = ypos/rowHeight;
-            int column = xpos/columnWidth;
-            if(row>numRows) row = numRows-1;
-            if(row<0) row = 0;
-            if(column>numColumns) column = numColumns-1;
-            if(column<0) column = 0;
-            
-            if(lastChanged[0]!=row && lastChanged[1]!=column) {
-                lastChanged = new int[]{row, column};
-                System.out.println(row + ", " + column);
-                board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1:-1);
+                    int row = ypos / rowHeight;
+                    int column = xpos / columnWidth;
+                    if (row < numRows && row >= 0 && column < numColumns && column >= 0) {
+                        if (lastChanged[0] != row || lastChanged[1] != column) {
+                            lastChanged = new int[] {row, column};
+                            System.out.println(row + ", " + column);
+                            board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1 : -1);
+                        }
+                    }
+                    repaint();
+                    //left button
+                }
             }
-            //left button
-        }
-      }
-    });
+        });
 
-    addMouseMotionListener(new MouseMotionAdapter() {
-      public void mouseMoved(MouseEvent e) {
-        repaint();
-      }
-    });
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(MouseEvent e) {
+                repaint();
+            }
+        });
         addKeyListener(new KeyAdapter() {
 
             public void keyPressed(KeyEvent e) {
-                if (e.VK_RIGHT == e.getKeyCode())
-                {
+                if (e.VK_N == e.getKeyCode()) {
+                    nextOn = !nextOn;
                 }
-                if (e.VK_LEFT == e.getKeyCode())
-                {
-                    
+                if (e.VK_RIGHT == e.getKeyCode()) {
+                    board.nextMove();
                 }
-                if (e.VK_UP == e.getKeyCode())
-                {
-                }
-                if (e.VK_DOWN == e.getKeyCode())
-                {
-                }
-                if (e.VK_SPACE == e.getKeyCode())
-                {
+                if (e.VK_SPACE == e.getKeyCode()) {
                     paused = !paused;
+                }
+                if (e.VK_R == e.getKeyCode()) {
+                    reset();
                 }
 
                 repaint();
@@ -127,9 +130,6 @@ public class GameOfLife extends JFrame implements Runnable {
         requestFocus();
     }
 ////////////////////////////////////////////////////////////////////////////
-    public void destroy() {
-    }
-////////////////////////////////////////////////////////////////////////////
     public void paint(Graphics gOld) {
         if (image == null || w.xsize != getSize().width || w.ysize != getSize().height) {
             w.xsize = getSize().width;
@@ -137,7 +137,7 @@ public class GameOfLife extends JFrame implements Runnable {
             image = createImage(w.xsize, w.ysize);
             g = (Graphics2D) image.getGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+                               RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
 //fill background
@@ -153,49 +153,50 @@ public class GameOfLife extends JFrame implements Runnable {
 // draw border
         g.setColor(Color.red);
         g.drawPolyline(x, y, 5);
-        
+
         if (animateFirstTime) {
             gOld.drawImage(image, 0, 0, null);
             return;
         }
-        
 
-        for (int zrow=0;zrow<numRows;zrow++)
-        {
-            for (int zcolumn=0;zcolumn<numColumns;zcolumn++)
-            {
-                if(board.isAlive(zrow,zcolumn)) {
+
+        for (int zrow = 0; zrow < numRows; zrow++) {
+            for (int zcolumn = 0; zcolumn < numColumns; zcolumn++) {
+                if (board.isAlive(zrow, zcolumn)) {
                     g.setColor(Color.BLACK);
-                    g.fillRect(w.getX(0)+zcolumn*columnWidth,
-                      w.getY(0)+zrow*rowHeight,
-                      columnWidth,
-                      rowHeight);
-                }
-                else  {
-                    if(paused)
+                    g.fillRect(w.getX(0) + zcolumn * columnWidth,
+                               w.getY(0) + zrow * rowHeight,
+                               columnWidth,
+                               rowHeight);
+                } else  {
+                    if (paused)
                         g.setColor(Color.RED);
                     else
                         g.setColor(Color.WHITE);
-                    
-                    g.fillRect(w.getX(0)+zcolumn*columnWidth,
-                      w.getY(0)+zrow*rowHeight,
-                      columnWidth,
-                      rowHeight);
+
+                    g.fillRect(w.getX(0) + zcolumn * columnWidth,
+                               w.getY(0) + zrow * rowHeight,
+                               columnWidth,
+                               rowHeight);
+                }
+                if (nextOn) {
+                    g.setColor(Color.MAGENTA);
+                    g.drawString("" + board.getNextTo(zrow, zcolumn),
+                                 w.getX(0) + zcolumn * columnWidth + columnWidth / 2 - 4,
+                                 w.getY(0) + zrow * rowHeight + rowHeight / 2 + 4);
                 }
             }
         }
         g.setColor(Color.blue);
 //horizontal lines
-        for (int zi=1;zi<numRows;zi++)
-        {
-            g.drawLine(w.getX(0) ,w.getY(0)+zi*w.getHeight2()/numRows ,
-            w.getX(w.getWidth2()) ,w.getY(0)+zi*w.getHeight2()/numRows );
+        for (int zi = 1; zi < numRows; zi++) {
+            g.drawLine(w.getX(0) , w.getY(0) + zi * w.getHeight2() / numRows ,
+                       w.getX(w.getWidth2()) , w.getY(0) + zi * w.getHeight2() / numRows );
         }
 //vertical lines
-        for (int zi=1;zi<numColumns;zi++)
-        {
-            g.drawLine(w.getX(0)+zi*w.getWidth2()/numColumns ,w.getY(0) ,
-            w.getX(0)+zi*w.getWidth2()/numColumns,w.getY(w.getHeight2())  );
+        for (int zi = 1; zi < numColumns; zi++) {
+            g.drawLine(w.getX(0) + zi * w.getWidth2() / numColumns , w.getY(0) ,
+                       w.getX(0) + zi * w.getWidth2() / numColumns, w.getY(w.getHeight2())  );
         }
         gOld.drawImage(image, 0, 0, null);
     }
@@ -214,7 +215,7 @@ public class GameOfLife extends JFrame implements Runnable {
         }
     }
 /////////////////////////////////////////////////////////////////////////
-    public void reset() {  
+    public void reset() {
         board.resetBoard();
     }
 /////////////////////////////////////////////////////////////////////////
@@ -228,11 +229,11 @@ public class GameOfLife extends JFrame implements Runnable {
             }
             board = new Board(numColumns, numRows);
         }
-        if(!paused) {
+        if (!paused) {
             board.nextMove();
         }
-        columnWidth = w.getWidth2()/numColumns;
-        rowHeight = w.getHeight2()/numRows;
+        columnWidth = w.getWidth2() / numColumns;
+        rowHeight = w.getHeight2() / numRows;
     }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -248,39 +249,38 @@ public class GameOfLife extends JFrame implements Runnable {
             relaxer.stop();
         }
         relaxer = null;
-    }  
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-class Window
-        {
-    
+class Window {
+
     static final int TOP_BORDER = 2;
     static final int SIDE_BORDER = 8;
     static final int BOTTOM_BORDER = 8;
     static final int YTITLE = 22;
-    
-    static final int WINDOW_WIDTH = 512 + (SIDE_BORDER*2);
+
+    static final int WINDOW_WIDTH = 512 + (SIDE_BORDER * 2);
     static final int WINDOW_HEIGHT = 512 + TOP_BORDER + YTITLE + BOTTOM_BORDER;
-    
+
     static int xsize = -1;
     static int ysize = -1;
-    
+
     public int getX(int x) {
-        return (x+SIDE_BORDER);
+        return (x + SIDE_BORDER);
     }
     public int getY(int y) {
         return (y + TOP_BORDER + YTITLE);
     }
-    
+
     public int getYNormal(int y) {
         return (-y + TOP_BORDER + YTITLE + getHeight2());
     }
-        
+
     public int getWidth2() {
-        return (xsize - SIDE_BORDER*2);
+        return (xsize - SIDE_BORDER * 2);
     }
     public int getHeight2() {
         return (ysize - TOP_BORDER - YTITLE - BOTTOM_BORDER);
