@@ -38,7 +38,6 @@ public class Board {
 			}
 		}
 	}
-
 	//Changes Tile based on phase
 	public void changeTile(int row, int col, int phase) {
 		Tile piece = board[row][col];
@@ -112,7 +111,6 @@ public class Board {
 			board[ row + inc[0][i] ][ col + inc[1][i] ].nextTo += phase;
 		}
 	}
-
 	//Check how many Tiles next to
 	private int nextTo(int row, int col) {
 		int count = 0;
@@ -148,5 +146,9 @@ public class Board {
 			}
 		}
 		checkNextTo();
+	}
+	public String toString() { 
+		
+		return "";
 	}
 }

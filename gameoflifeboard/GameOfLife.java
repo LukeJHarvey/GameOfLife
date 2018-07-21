@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class GameOfLife extends JFrame implements Runnable {
 
-    static Window w = new Window();
+    static Window w;
 
     boolean animateFirstTime = true;
 
@@ -41,6 +41,7 @@ public class GameOfLife extends JFrame implements Runnable {
             numRows = Integer.parseInt(args[0]);
             numColumns = Integer.parseInt(args[1]);
         }
+        w = new Window();
 
         frame1 = new GameOfLife();
         frame1.setSize(w.WINDOW_WIDTH, w.WINDOW_HEIGHT);
@@ -53,13 +54,12 @@ public class GameOfLife extends JFrame implements Runnable {
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (e.BUTTON1 == e.getButton()) {
-                    int xpos = e.getX() - w.getX(0);
+                    int xpos = e.getX() - w.SIDE_BORDER;
                     int ypos = e.getY() - w.getY(0);
 
                     int row = ypos / rowHeight;
                     int column = xpos / columnWidth;
                     if (row < numRows && row >= 0 && column < numColumns && column >= 0) {
-                        System.out.println(row + ", " + column);
                         board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1 : -1);
                     }
                 }
@@ -81,7 +81,6 @@ public class GameOfLife extends JFrame implements Runnable {
                     if (row < numRows && row >= 0 && column < numColumns && column >= 0) {
                         if (lastChanged[0] != row || lastChanged[1] != column) {
                             lastChanged = new int[] {row, column};
-                            System.out.println(row + ", " + column);
                             board.changeTile(row, column, board.getPhase(row, column) == -1 ? 1 : -1);
                         }
                     }
@@ -150,7 +149,7 @@ public class GameOfLife extends JFrame implements Runnable {
 // draw border
         g.setColor(Color.red);
         g.drawPolyline(x, y, 5);
-
+ 
         if (animateFirstTime) {
             gOld.drawImage(image, 0, 0, null);
             return;
@@ -223,13 +222,13 @@ public class GameOfLife extends JFrame implements Runnable {
                 w.xsize = getSize().width;
                 w.ysize = getSize().height;
             }
-            board = new Board(numColumns, numRows);
+            board = new Board(numRows, numColumns);
         }
         if (!paused) {
             board.nextMove();
         }
-        columnWidth = w.getWidth2() / numColumns;
-        rowHeight = w.getHeight2() / numRows;
+        columnWidth = 16;
+        rowHeight = 16;
     }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -258,8 +257,8 @@ class Window {
     static final int BOTTOM_BORDER = 8;
     static final int YTITLE = 22;
 
-    static final int WINDOW_WIDTH = 512 + (SIDE_BORDER * 2);
-    static final int WINDOW_HEIGHT = 512 + TOP_BORDER + YTITLE + BOTTOM_BORDER;
+    static final int WINDOW_WIDTH = (GameOfLife.numColumns*16) + (SIDE_BORDER * 2);
+    static final int WINDOW_HEIGHT = (GameOfLife.numRows*16) + TOP_BORDER + YTITLE + BOTTOM_BORDER;
 
     static int xsize = -1;
     static int ysize = -1;
