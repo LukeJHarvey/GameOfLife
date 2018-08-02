@@ -16,6 +16,7 @@ import javax.swing.*;
 public class GameOfLife extends JFrame implements Runnable {
 
     static Window w;
+    Thread relaxer;
 
     boolean animateFirstTime = true;
 
@@ -28,27 +29,30 @@ public class GameOfLife extends JFrame implements Runnable {
     public static int rowHeight = 16;
     boolean paused = true;
     boolean nextOn = false;
+    boolean running = true;
     int lastChanged[] = new int[2];
     static Board board;
     static Scanner fileScan;
-    static Scanner terminalScan;
+
+    static Thread terminal;
 
     public static void main(String[] args) throws IOException {
         if (args.length == 1) {
-            String fileName = args[0];
-            board = new Board(importBoard(fileName));
+            board = new Board(importBoard(args[0]));
         } else {
             numRows = Integer.parseInt(args[0]);
             numColumns = Integer.parseInt(args[1]);
             board = new Board(numRows, numColumns);
         }
         w = new Window();
-        terminalScan = new Scanner(System.in);
 
         frame1 = new GameOfLife();
         frame1.setSize(w.WINDOW_WIDTH, w.WINDOW_HEIGHT);
         frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame1.setVisible(true);
+
+        terminal = new Terminal();
+        terminal.start();
     }
 
     public GameOfLife() {
@@ -96,7 +100,7 @@ public class GameOfLife extends JFrame implements Runnable {
                 repaint();
             }
         });
-        
+
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.VK_N == e.getKeyCode()) {
@@ -119,10 +123,7 @@ public class GameOfLife extends JFrame implements Runnable {
         start();
     }
 
-
-
-
-    Thread relaxer;
+    
 ////////////////////////////////////////////////////////////////////////////
     public void init() {
         requestFocus();
@@ -200,8 +201,8 @@ public class GameOfLife extends JFrame implements Runnable {
     }
 ////////////////////////////////////////////////////////////////////////////
 // needed for implement runnable
-    public void run() {
-        while (true) {
+    public void run(){
+        while (running) {
             animate();
             repaint();
             double seconds = 0.05;    //time that 1 frame takes.
@@ -211,6 +212,10 @@ public class GameOfLife extends JFrame implements Runnable {
             } catch (InterruptedException e) {
             }
         }
+    }
+////////////////////////////////////////////////////////////////////////////
+    public void terminate() {
+        running = false;
     }
 /////////////////////////////////////////////////////////////////////////
     public void reset() {
@@ -229,7 +234,15 @@ public class GameOfLife extends JFrame implements Runnable {
             board.nextMove();
         }
     }
-
+////////////////////////////////////////////////////////////////////////////
+    public static void setNewFrame() {
+        frame1.terminate();
+        GameOfLife.w = new Window();
+        GameOfLife.frame1 = new GameOfLife();
+        GameOfLife.frame1.setSize(w.WINDOW_WIDTH, w.WINDOW_HEIGHT);
+        GameOfLife.frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        GameOfLife.frame1.setVisible(true);
+    }
 ////////////////////////////////////////////////////////////////////////////
     public static int[][] importBoard(String fN) throws IOException{
         fileScan = new Scanner(new File(fN));
@@ -252,7 +265,6 @@ public class GameOfLife extends JFrame implements Runnable {
         }
         return board;
     }
-
 ////////////////////////////////////////////////////////////////////////////
     public void start() {
         if (relaxer == null) {
@@ -273,7 +285,7 @@ public class GameOfLife extends JFrame implements Runnable {
 /////////////////////////////////////////////////////////////////////////
 
 class Window {
-    static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     static final int TOP_BORDER = 2;
     static final int SIDE_BORDER = 8;
     static final int BOTTOM_BORDER = 8;

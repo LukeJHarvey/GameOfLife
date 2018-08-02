@@ -11,7 +11,7 @@
 JAVAC      = javac 
 PACKAGE	   = gameoflifeboard
 MAINCLASS  = $(PACKAGE)/GameOfLife
-JAVASRC    = $(PACKAGE)/GameOfLife.java $(PACKAGE)/Board.java
+JAVASRC    = $(PACKAGE)/GameOfLife.java $(PACKAGE)/Board.java $(PACKAGE)/Terminal.java
 SOURCES    = $(JAVASRC) makefile README
 CLASSES    = $(patsubst %.java, %.class, $(JAVASRC))
 JARCLASSES = $(patsubst %.class, %*.class, $(CLASSES))
