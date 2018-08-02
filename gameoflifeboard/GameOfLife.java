@@ -21,12 +21,11 @@ public class GameOfLife extends JFrame implements Runnable {
 
     Image image;
     Graphics2D g;
-
     static GameOfLife frame1;
     static int numRows;
     static int numColumns;
-    public static int columnWidth;
-    public static int rowHeight;
+    public static int columnWidth = 16;
+    public static int rowHeight = 16;
     boolean paused = true;
     boolean nextOn = false;
     int lastChanged[] = new int[2];
@@ -227,8 +226,6 @@ public class GameOfLife extends JFrame implements Runnable {
         if (!paused) {
             board.nextMove();
         }
-        columnWidth = 16;
-        rowHeight = 16;
     }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -251,17 +248,34 @@ public class GameOfLife extends JFrame implements Runnable {
 /////////////////////////////////////////////////////////////////////////
 
 class Window {
-
+    static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     static final int TOP_BORDER = 2;
     static final int SIDE_BORDER = 8;
     static final int BOTTOM_BORDER = 8;
     static final int YTITLE = 22;
 
-    static final int WINDOW_WIDTH = (GameOfLife.numColumns*16) + (SIDE_BORDER * 2);
-    static final int WINDOW_HEIGHT = (GameOfLife.numRows*16) + TOP_BORDER + YTITLE + BOTTOM_BORDER;
+    static int WINDOW_WIDTH = (SIDE_BORDER * 2);
+    static int WINDOW_HEIGHT = TOP_BORDER + YTITLE + BOTTOM_BORDER;
+    /*static int WINDOW_WIDTH = (GameOfLife.numColumns*16) + (SIDE_BORDER * 2);
+    static int WINDOW_HEIGHT = (GameOfLife.numRows*16) + TOP_BORDER + YTITLE + BOTTOM_BORDER;*/
 
     static int xsize = -1;
     static int ysize = -1;
+
+    public Window() {
+        int width = (GameOfLife.numColumns*16) + WINDOW_WIDTH;
+        int height = (GameOfLife.numRows*16) + WINDOW_HEIGHT;
+        int size = 16;
+        if(screenSize.getHeight()<height || screenSize.getWidth()<width) {
+            width = (int)((screenSize.getWidth()-WINDOW_WIDTH)/GameOfLife.numColumns);
+            height = (int)((screenSize.getHeight()-WINDOW_HEIGHT)/GameOfLife.numRows);
+            size = width>height ? height : width;
+        }
+        WINDOW_WIDTH += size*GameOfLife.numColumns;
+        WINDOW_HEIGHT += size*GameOfLife.numRows;
+        GameOfLife.columnWidth = size;
+        GameOfLife.rowHeight = size;
+    }
 
     public int getX(int x) {
         return (x + SIDE_BORDER);
