@@ -1,7 +1,7 @@
 Current bugs:
-Doesn't resize frame when importing from terminal
+Nothing right now!
 
 ToDo:
-Exporting Templates InGame
-Variable Framerate
+Exporting Templates InGame__
+Variable Framerate__
 Play in Reverse

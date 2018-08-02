@@ -236,6 +236,9 @@ public class GameOfLife extends JFrame implements Runnable {
     }
 ////////////////////////////////////////////////////////////////////////////
     public static void setNewFrame() {
+        frame1.setVisible(false);
+        frame1.dispose();
+        //frame1.dispatchEvent(new WindowEvent(frame1, WindowEvent.WINDOW_CLOSING));
         frame1.terminate();
         GameOfLife.w = new Window();
         GameOfLife.frame1 = new GameOfLife();
@@ -291,8 +294,8 @@ class Window {
     static final int BOTTOM_BORDER = 8;
     static final int YTITLE = 22;
 
-    static int WINDOW_WIDTH = (SIDE_BORDER * 2);
-    static int WINDOW_HEIGHT = TOP_BORDER + YTITLE + BOTTOM_BORDER;
+    int WINDOW_WIDTH = (SIDE_BORDER * 2);
+    int WINDOW_HEIGHT = TOP_BORDER + YTITLE + BOTTOM_BORDER;
 
     static int xsize = -1;
     static int ysize = -1;

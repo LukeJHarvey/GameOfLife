@@ -8,7 +8,6 @@ public class Terminal extends Thread {
 		while(true) {
 			try {
 				while(terminalScan.hasNextLine()) {
-		            System.out.println("fjiwejo");
 		            String[] nextLine = terminalScan.nextLine().split(" ");
 		            if(nextLine[0].equals("Import")) {
 		                GameOfLife.frame1.board = new Board(GameOfLife.importBoard(nextLine[1]));
