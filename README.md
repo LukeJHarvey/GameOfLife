@@ -4,6 +4,10 @@ Conways Game of Life Rules:
 - Any live cell with more than three live neighbors dies, as if by overpopulation.
 - Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 
+GameOfLifeBoard is the current implementation of the game  
+GameOfLifeTile is an implementation from High School  
+Make file only works for GameOfLifeBoard  
+
 How To Play:
 1. Run Terminal in Main Folder
 2. In Terminal:
