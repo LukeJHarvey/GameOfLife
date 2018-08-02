@@ -5,15 +5,15 @@ Conways Game of Life Rules:
 - Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 
 How To Play:
-Go into main folder
-Run Terminal
-In Terminal:
-	"make"
-	"java gameoflifeboard/GameOfLife 30 30" or "java gameoflifeboard/GameOfLife ex1"
+1. Go into main folder
+2. Run Terminal
+3. In Terminal:
+   - "make"
+   - "java gameoflifeboard/GameOfLife 30 30" or "java gameoflifeboard/GameOfLife ex1"
 
 To Import in game:
-In Terminal:
-	"Import ex1"
+1. In Terminal:
+   - "Import ex1"
 
 Features:
 - [x] Functioning Game Of Life, w/ efficient board
