@@ -10,7 +10,7 @@ public class Terminal extends Thread {
 				while(terminalScan.hasNextLine()) {
 		            String[] nextLine = terminalScan.nextLine().split(" ");
 		            if(nextLine[0].equals("Import")) {
-		                GameOfLife.frame1.board = new Board(GameOfLife.importBoard(nextLine[1]));
+		                GameOfLife.frame1.board = new Board(GameOfLife.importBoard("Templates/" + nextLine[1]));
 		                GameOfLife.setNewFrame();
 		            }
 		        }
