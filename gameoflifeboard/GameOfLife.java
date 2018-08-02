@@ -29,18 +29,21 @@ public class GameOfLife extends JFrame implements Runnable {
     boolean paused = true;
     boolean nextOn = false;
     int lastChanged[] = new int[2];
-    Board board;
+    static Board board;
+    static Scanner fileScan;
+    static Scanner terminalScan;
 
     public static void main(String[] args) throws IOException {
-        if (args.length == 3) {
-            String filename = args[3];
-            Scanner in = new Scanner(new File(filename));
-
+        if (args.length == 1) {
+            String fileName = args[0];
+            board = new Board(importBoard(fileName));
         } else {
             numRows = Integer.parseInt(args[0]);
             numColumns = Integer.parseInt(args[1]);
+            board = new Board(numRows, numColumns);
         }
         w = new Window();
+        terminalScan = new Scanner(System.in);
 
         frame1 = new GameOfLife();
         frame1.setSize(w.WINDOW_WIDTH, w.WINDOW_HEIGHT);
@@ -93,8 +96,8 @@ public class GameOfLife extends JFrame implements Runnable {
                 repaint();
             }
         });
+        
         addKeyListener(new KeyAdapter() {
-
             public void keyPressed(KeyEvent e) {
                 if (e.VK_N == e.getKeyCode()) {
                     nextOn = !nextOn;
@@ -148,7 +151,7 @@ public class GameOfLife extends JFrame implements Runnable {
 // draw border
         g.setColor(Color.red);
         g.drawPolyline(x, y, 5);
- 
+
         if (animateFirstTime) {
             gOld.drawImage(image, 0, 0, null);
             return;
@@ -196,7 +199,7 @@ public class GameOfLife extends JFrame implements Runnable {
         gOld.drawImage(image, 0, 0, null);
     }
 ////////////////////////////////////////////////////////////////////////////
-// needed for     implement runnable
+// needed for implement runnable
     public void run() {
         while (true) {
             animate();
@@ -221,11 +224,33 @@ public class GameOfLife extends JFrame implements Runnable {
                 w.xsize = getSize().width;
                 w.ysize = getSize().height;
             }
-            board = new Board(numRows, numColumns);
         }
         if (!paused) {
             board.nextMove();
         }
+    }
+
+////////////////////////////////////////////////////////////////////////////
+    public static int[][] importBoard(String fN) throws IOException{
+        fileScan = new Scanner(new File(fN));
+        int row = 1;
+        int col = fileScan.nextLine().split(" ").length;
+        while (fileScan.hasNextLine()) {
+            row++;
+            fileScan.nextLine();
+        }
+        numColumns = col;
+        numRows = row;
+
+        int[][] board = new int[row][col];
+        fileScan = new Scanner(new File(fN));
+        for(int i = 0; i < row; i++) {
+            String[] nextLine = fileScan.nextLine().split(" ");
+            for(int j = 0; j < col; j++) {
+                board[i][j] = Integer.parseInt(nextLine[j]) == 0 ? -1 : 1;
+            }
+        }
+        return board;
     }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -256,23 +281,21 @@ class Window {
 
     static int WINDOW_WIDTH = (SIDE_BORDER * 2);
     static int WINDOW_HEIGHT = TOP_BORDER + YTITLE + BOTTOM_BORDER;
-    /*static int WINDOW_WIDTH = (GameOfLife.numColumns*16) + (SIDE_BORDER * 2);
-    static int WINDOW_HEIGHT = (GameOfLife.numRows*16) + TOP_BORDER + YTITLE + BOTTOM_BORDER;*/
 
     static int xsize = -1;
     static int ysize = -1;
 
     public Window() {
-        int width = (GameOfLife.numColumns*16) + WINDOW_WIDTH;
-        int height = (GameOfLife.numRows*16) + WINDOW_HEIGHT;
+        int width = (GameOfLife.numColumns * 16) + WINDOW_WIDTH;
+        int height = (GameOfLife.numRows * 16) + WINDOW_HEIGHT;
         int size = 16;
-        if(screenSize.getHeight()<height || screenSize.getWidth()<width) {
-            width = (int)((screenSize.getWidth()-WINDOW_WIDTH)/GameOfLife.numColumns);
-            height = (int)((screenSize.getHeight()-WINDOW_HEIGHT)/GameOfLife.numRows);
-            size = width>height ? height : width;
+        if (screenSize.getHeight() < height || screenSize.getWidth() < width) {
+            width = (int)((screenSize.getWidth() - WINDOW_WIDTH) / GameOfLife.numColumns);
+            height = (int)((screenSize.getHeight() - WINDOW_HEIGHT) / GameOfLife.numRows);
+            size = width > height ? height : width;
         }
-        WINDOW_WIDTH += size*GameOfLife.numColumns;
-        WINDOW_HEIGHT += size*GameOfLife.numRows;
+        WINDOW_WIDTH += size * GameOfLife.numColumns;
+        WINDOW_HEIGHT += size * GameOfLife.numRows;
         GameOfLife.columnWidth = size;
         GameOfLife.rowHeight = size;
     }
