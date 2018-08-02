@@ -1,7 +1,14 @@
 Current bugs:
 Nothing right now!
 
-ToDo:
-Exporting Templates InGame__
-Variable Framerate__
-Play in Reverse
+Features:
+- [x] Functioning Game Of Life, w/ efficient board
+- [x] Pause
+- [x] Variable Board Sizes
+- [x] Importing Template at Start
+- [x] Terminal Thread
+- [x] Importing from Terminal
+- [ ] Exporting from Terminal
+- [ ] Resizing board in game
+- [ ] Go back to last import
+- [ ] Reverse?
