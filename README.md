@@ -1,5 +1,5 @@
 Current bugs:
-Tile sizes don't resize when getting bigger than the Computers Screen Size
+Nothing yet.
 
 ToDo:
 Importing and Exporting Maps
