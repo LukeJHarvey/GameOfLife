@@ -115,7 +115,6 @@ public class GameOfLife extends JFrame implements Runnable {
                 if (e.VK_R == e.getKeyCode()) {
                     reset();
                 }
-
                 repaint();
             }
         });

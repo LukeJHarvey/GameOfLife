@@ -51,7 +51,6 @@ public class Board {
 		return board[row][col].phase;
 	}
 	public int getNextTo(int row, int col) {
-		//board[row][col].nextTo = nextTo(row, col);
 		return board[row][col].nextTo;
 	}
 	public void resetBoard() {
