@@ -13,10 +13,16 @@ How To Play:
 2. In Terminal:
    - "make"
    - "java gameoflifeboard/GameOfLife 30 30" or "java gameoflifeboard/GameOfLife ex1"
+3. Click a square to change it from alive to dead
+4. Press space to pause and unpause
 
-To Import in game:
-1. In Terminal:
-   - "Import ex1"
+Terminal Commands
+```
+import filename
+export filename
+change size [column size]
+exit
+```
 
 Features:
 - [x] Functioning Game Of Life, w/ efficient board
@@ -25,7 +31,8 @@ Features:
 - [x] Importing Template at Start
 - [x] Terminal Thread
 - [x] Importing from Terminal
-- [ ] Exporting from Terminal
+- [x] Exporting from Terminal
+- [ ] Resizing board from Terminal
 - [ ] Resizing board in game
 - [ ] Add Buttons to function as Exporting, and Importing
 - [ ] Change makefile to organize files better

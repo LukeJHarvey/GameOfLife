@@ -61,6 +61,12 @@ public class Board {
 		board = new Tile[row][col];
 		initializeBoard();
 	}
+	public int getRows() {
+		return board.length;
+	}
+	public int getColumns() {
+		return board[0].length;
+	}
 
 	//gets Increment for checking around a piece
 	private int[][] getIncrement(int row, int col) {

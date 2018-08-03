@@ -217,6 +217,10 @@ public class GameOfLife extends JFrame implements Runnable {
         running = false;
     }
 /////////////////////////////////////////////////////////////////////////
+    public void exit() {
+        frame1.dispatchEvent(new WindowEvent(frame1, WindowEvent.WINDOW_CLOSING));
+    }
+/////////////////////////////////////////////////////////////////////////
     public void reset() {
         board.resetBoard();
     }
@@ -237,7 +241,6 @@ public class GameOfLife extends JFrame implements Runnable {
     public static void setNewFrame() {
         frame1.setVisible(false);
         frame1.dispose();
-        //frame1.dispatchEvent(new WindowEvent(frame1, WindowEvent.WINDOW_CLOSING));
         frame1.terminate();
         GameOfLife.w = new Window();
         GameOfLife.frame1 = new GameOfLife();
@@ -246,7 +249,7 @@ public class GameOfLife extends JFrame implements Runnable {
         GameOfLife.frame1.setVisible(true);
     }
 ////////////////////////////////////////////////////////////////////////////
-    public static int[][] importBoard(String fN) throws IOException{
+    public static int[][] importBoard(String fN) throws IOException {
         fileScan = new Scanner(new File(fN));
         int row = 1;
         int col = fileScan.nextLine().split(" ").length;
@@ -266,6 +269,19 @@ public class GameOfLife extends JFrame implements Runnable {
             }
         }
         return board;
+    }
+////////////////////////////////////////////////////////////////////////////
+    public static void exportBoard(String fN) throws IOException {
+        PrintWriter template = new PrintWriter(new FileWriter(fN));
+        for (int row = 0; row < numRows; row++) {
+            String line = "";
+            for (int col = 0; col < numColumns; col++) {
+                line += board.getPhase(row, col) == -1 ? 0 : 1;
+                line += " ";
+            }
+            template.println(line.substring(0,line.length()-1));
+        }
+        template.close();
     }
 ////////////////////////////////////////////////////////////////////////////
     public void start() {
