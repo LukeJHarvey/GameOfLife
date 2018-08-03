@@ -32,8 +32,8 @@ Features:
 - [x] Terminal Thread
 - [x] Importing from Terminal
 - [x] Exporting from Terminal
-- [ ] Resizing board from Terminal
-- [ ] Resizing board in game
+- [x] Resizing board from Terminal
+- [x] Resizing board in game
 - [ ] Add Buttons to function as Exporting, and Importing
 - [ ] Change makefile to organize files better
 - [ ] Go back to last import
